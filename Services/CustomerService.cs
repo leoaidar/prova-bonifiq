@@ -4,18 +4,22 @@ using ProvaPub.Repository;
 
 namespace ProvaPub.Services
 {
-    public class CustomerService
+    public class CustomerService : ICustomerService
     {
-        TestDbContext _ctx;
+        private readonly TestDbContext _ctx;
 
         public CustomerService(TestDbContext ctx)
         {
             _ctx = ctx;
         }
 
-        public CustomerList ListCustomers(int page)
+        public async Task<CustomerList> ListCustomersAsync(int page)
         {
-            return new CustomerList() { HasNext = false, TotalCount = 10, Customers = _ctx.Customers.ToList() };
+            var items = await Task.FromResult(_ctx.Customers.AsQueryable());
+
+            var paginated = Pagination<Customer>.Create(items, page);
+
+            return new CustomerList { Result = paginated };
         }
 
         public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
