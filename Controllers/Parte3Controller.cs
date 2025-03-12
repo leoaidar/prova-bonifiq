@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProvaPub.Models;
+using ProvaPub.Models.Enums;
 using ProvaPub.Repository;
 using ProvaPub.Services;
+using ProvaPub.Utils;
 
 namespace ProvaPub.Controllers
 {
@@ -19,17 +21,41 @@ namespace ProvaPub.Controllers
     [ApiController]
 	[Route("[controller]")]
 	public class Parte3Controller :  ControllerBase
-	{
-		[HttpGet("orders")]
-		public async Task<Order> PlaceOrder(string paymentMethod, decimal paymentValue, int customerId)
-		{
-            var contextOptions = new DbContextOptionsBuilder<TestDbContext>()
-    .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Teste;Trusted_Connection=True;")
-    .Options;
+    {
+        private readonly OrderService _orderService;
 
-            using var context = new TestDbContext(contextOptions);
+        public Parte3Controller(OrderService orderService)
+        {
+            _orderService = orderService;
+        }
 
-            return await new OrderService(context).PayOrder(paymentMethod, paymentValue, customerId);
-		}
+        [HttpGet("orders")]
+        public async Task<IActionResult> PlaceOrder(PaymentMethodEnum paymentMethod, decimal paymentValue, int customerId)
+        {
+            try
+            {
+                var order = await _orderService.PayOrder(paymentMethod, paymentValue, customerId);
+
+                // Converte a data pro fuso brasileiro (UTC-3)
+                var orderDto = new
+                {
+                    order.Id,
+                    order.Value,
+                    order.CustomerId,
+                    PaymentMethod = paymentMethod.GetDisplayName(),
+                    OrderDate = TimeZoneInfo.ConvertTimeFromUtc(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"))
+                };
+
+                return Ok(orderDto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 	}
 }
