@@ -1,9 +1,10 @@
-﻿using ProvaPub.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProvaPub.Models;
 
-namespace ProvaPub.Services
+namespace ProvaPub.Services.Interfaces
 {
     public interface IProductService
     {
-        public Task<ProductList> ListProductsAsync(int page);
+        public Task<IActionResult> GetAllAsync(int page);
     }
 }

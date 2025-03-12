@@ -2,6 +2,7 @@
 using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
+using ProvaPub.Services.Interfaces;
 
 namespace ProvaPub.Controllers
 {
@@ -27,15 +28,15 @@ namespace ProvaPub.Controllers
         }
 
         [HttpGet("products")]
-		public async Task<ProductList> ListProductsListAsync(int page)
+		public async Task<IActionResult> ListProductsListAsync(int page)
 		{
-			return await _productService.ListProductsAsync(page);
+			return await _productService.GetAllAsync(page);
 		}
 
 		[HttpGet("customers")]
-		public async Task<CustomerList> ListCustomersAsync(int page)
+		public async Task<IActionResult> ListCustomersAsync(int page)
 		{
-			return await _customerService.ListCustomersAsync(page);
+			return await _customerService.GetAllAsync(page);
 		}
 	}
 }
