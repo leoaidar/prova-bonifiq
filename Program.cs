@@ -5,6 +5,7 @@ using ProvaPub.Services;
 using ProvaPub.Services.Interfaces;
 using ProvaPub.Services.Payments;
 using ProvaPub.Services.Payments.Interfaces;
+using ProvaPub.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,17 +22,21 @@ builder.Services.AddSwaggerGen(options =>
     options.SchemaFilter<EnumSchemaFilter>();
 });
 
-// Registro dos serviços com injeção de dependência
+// Registro dos serviÃ§os com injeÃ§Ã£o de dependÃªncia
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<RandomService>();
 builder.Services.AddScoped<OrderService>();
 
-// Registra os métodos de pagamento
+// Registra os mÃ©todos de pagamento
 builder.Services.AddScoped<IPaymentMethod, PixPaymentMethod>();
 builder.Services.AddScoped<IPaymentMethod, CreditCardPaymentMethod>();
 builder.Services.AddScoped<IPaymentMethod, PayPalPaymentMethod>();
 
+// Registra o provedor de data/hora
+builder.Services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+
+// Registra o banco de dados
 builder.Services.AddDbContext<TestDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ctx")));
 var app = builder.Build();
