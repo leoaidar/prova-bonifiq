@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProvaPub.Models;
-using ProvaPub.Repository;
-using ProvaPub.Services;
+using ProvaPub.Services.Interfaces;
 
 namespace ProvaPub.Controllers
 {
-
     /// <summary>
     /// O Código abaixo faz uma chmada para a regra de negócio que valida se um consumidor pode fazer uma compra.
     /// Crie o teste unitário para esse Service. Se necessário, faça as alterações no código para que seja possível realizar os testes.
@@ -18,9 +15,9 @@ namespace ProvaPub.Controllers
     [Route("[controller]")]
     public class Parte4Controller : ControllerBase
     {
-        private readonly CustomerService _customerService;
+        private readonly ICustomerService _customerService;
 
-        public Parte4Controller(CustomerService customerService)
+        public Parte4Controller(ICustomerService customerService)
         {
             _customerService = customerService;
         }

@@ -5,6 +5,7 @@ namespace ProvaPub.Services.Interfaces
 {
     public interface ICustomerService
     {
-        public Task<IActionResult> GetAllAsync(int page);
+        Task<IActionResult> GetAllAsync(int page);
+        Task<bool> CanPurchase(int customerId, decimal purchaseValue);
     }
 }
